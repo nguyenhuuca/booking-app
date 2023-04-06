@@ -1,0 +1,18 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Context.puml
+
+' LAYOUT_WITH_LEGEND()
+
+title System Context diagram for Booking System
+
+Person(customer, "Customer", "A customer of Booking system")
+Person(internalcustomer, "Internal Customer", "Sales/ marketing team")
+System(booking_system, "Booking System", "Provides the booking functionality to customers")
+
+Rel(customer, booking_system, "View, filter, sort product")
+Rel(internalcustomer, booking_system, "get report")
+
+SHOW_LEGEND()
+@enduml

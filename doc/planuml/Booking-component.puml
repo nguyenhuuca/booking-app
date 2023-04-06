@@ -1,0 +1,23 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Component diagram for Booking System - Booking Service
+
+Container(spa, "Single page web app", "javascrip - html", "Provides the booking functionality to customers via their web browser.")
+ContainerDb(db, "Database", "Relational Database Schema", "Stores product etc.")
+Container(audit, "Audit Service", "Golang/Docker Container", "Audit customer action")
+
+Container_Boundary(api, "Booking Service") {
+    Component(productCtl, "Booking Product Handler", "Golang", "Allows users to get, filter, sort product")
+    Component(prodComp, "Booking product Component", "Golang", "Provides functionality related to booking product, etc.")
+    Rel(productCtl, prodComp, "Uses")
+    Rel_D(prodComp, db, "Read & write to", "DB")
+    Rel(prodComp, audit, "Save customer action","async(https, message broker)")
+}
+
+Rel(spa, productCtl, "Uses", "JSON/HTTPS")
+@enduml

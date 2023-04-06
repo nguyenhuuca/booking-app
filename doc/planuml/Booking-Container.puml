@@ -1,0 +1,45 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Container.puml
+
+'LAYOUT_TOP_DOWN()
+'LAYOUT_AS_SKETCH()
+'LAYOUT_WITH_LEGEND()
+AddElementTag("backup", $fontColor="orange")
+AddRelTag("backup", $textColor="orange", $lineColor="orange", $lineStyle = DashedLine())
+AddElementTag("microService", $shape=EightSidedShape(),$bgColor="CornflowerBlue", $fontColor="white", $legendText="micro service (eight sided)")
+title Container diagram for Booking System
+
+Person(customer, "Customer", "A customer of Booking system")
+Person(internalcustomer, "Internal Customer", "Sales/ marketing team")
+
+System_Boundary(c1, "Booking system") {
+    Container(sys_web_app, "WebApp", "Javascript/html", "booking functionality")
+    Container(booking_backend_api, "Booking Service", "Golang/Docker Container", "Provides booking functionality via API", $tags = "microService")
+    Container(audit_backend, "Audit Service", "Golang/Docker Container", "Audit customer action", $tags = "microService")
+    Container(report_backend_api, "Report Service", "Golang/Docker Container", "Provides analytics functionality via API", $tags = "microService")
+    ContainerDb(database, "Postgress Database", "Postgress Database", "Stores product data, etc.")
+
+}
+Rel(customer, sys_web_app, "Uses", "HTTPS")
+Rel(sys_web_app, report_backend_api, "get")
+Lay_R(customer, internalcustomer)
+Lay_R(sys_web_app, booking_backend_api)
+Lay_R(booking_backend_api, audit_backend)
+Lay_D(booking_backend_api, database)
+Lay_R(audit_backend, database)
+Lay_R(audit_backend, report_backend_api)
+
+Rel(sys_web_app, booking_backend_api, "Get")
+Rel(booking_backend_api, database, "find")
+Rel_R(booking_backend_api, audit_backend, "async send audit action")
+Rel(internalcustomer, sys_web_app, "User", "HTTPS")
+
+Rel(audit_backend, database, "save")
+Rel(report_backend_api, database, "get data")
+
+
+
+SHOW_LEGEND()
+@enduml
