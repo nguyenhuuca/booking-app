@@ -16,7 +16,7 @@ func LoadConfig() *Config {
 		dbURL = "localhost"
 	}
 
-	port := os.Getenv("DB_PORT")
+	port := os.Getenv("Port")
 	if port == "" {
 		port = "8080"
 	}

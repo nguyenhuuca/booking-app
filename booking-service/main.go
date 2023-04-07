@@ -7,5 +7,8 @@ import (
 
 func main() {
 	globalConfig := config.LoadConfig()
-	api.Router().Run("localhost:" + globalConfig.Port)
+	err := api.Router().Run("localhost:" + globalConfig.Port)
+	if err != nil {
+		return
+	}
 }
