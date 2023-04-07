@@ -12,7 +12,6 @@ type Config struct {
 func LoadConfig() *Config {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		//log.Fatal("DATABASE_URL environment variable is not set")
 		dbURL = "localhost"
 	}
 
