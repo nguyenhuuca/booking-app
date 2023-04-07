@@ -2,7 +2,6 @@ package db
 
 import (
 	"booking-service/config"
-	"booking-service/storage"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -18,7 +17,7 @@ func Init() *gorm.DB {
 
 	log.Println("migration data...")
 
-	err = db.AutoMigrate(&storage.Branch{}, &storage.Product{})
+	// err = db.AutoMigrate(&storage.Branch{}, &storage.Product{})
 	if err != nil {
 		log.Fatalln(err)
 		return nil
