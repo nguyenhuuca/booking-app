@@ -43,7 +43,7 @@ function bookingSearch() {
         renderHTML(rs)
         $("#loginSpinner").hide();
     }).fail(function(err) {
-        $("#errMsg").text(err.responseJSON.error.message);
+        $("#errMsg").text(err.responseJSON.msg);
         $("#errMsg").show();
         $("#loginSpinner").hide();
     });
@@ -113,7 +113,7 @@ function getSoftData(seachObj) {
     }).done(function(rs) {
         renderHTML(rs)
     }).fail(function(err) {
-        $("#errMsg").text(err.responseJSON.err);
+        $("#errMsg").text(err.responseJSON.msg);
         $("#errMsg").show();
     });
 
@@ -188,7 +188,7 @@ function loadData() {
     }).done(function(rs) {
         renderHTML(rs)
     }).fail(function(err) {
-        $("#errMsg").text(err.responseJSON.error.message);
+        $("#errMsg").text(err.responseJSON.mesage);
         $("#errMsg").show();
     });
 
