@@ -21,25 +21,30 @@ type BookingServ interface {
 }
 
 type CyloBooking struct {
-	Name     string
-	Branch   string
-	Price    float64
-	SortType string
+	Name        string
+	Branch      string
+	Price       float64
+	SortType    string
+	ProductRepo storage.ProductRepo
+	AuditServ   AuditServ
 }
 
-func (cylo CyloBooking) GetProduct(dbService storage.Db) []dto.ProductDto {
+func (cylo CyloBooking) GetProduct() []dto.ProductDto {
 	var products []dto.ProductDto
-	products = dbService.FindAll()
+	products = cylo.ProductRepo.FindAll()
 	return products
 }
 
-func (cylo CyloBooking) FilterProduct(dbService storage.Db) []dto.ProductDto {
+func (cylo CyloBooking) FilterProduct() []dto.ProductDto {
 	var products []dto.ProductDto
-	products = dbService.FilterProduct(cylo.Name, cylo.Branch, cylo.Price)
+	products = cylo.ProductRepo.FilterProduct(cylo.Name, cylo.Branch, cylo.Price)
+	cylo.AuditServ.sendAudit(dto.AuditDto{Identifier: "test",
+		Action: "Filter",
+		Data:   dto.ProductDto{Price: cylo.Price, Name: cylo.Name, Branch: cylo.Branch}})
 	return products
 }
 
-func (cylo CyloBooking) Sort(dbService storage.Db) ([]dto.ProductDto, error) {
+func (cylo CyloBooking) Sort(productRepo storage.ProductRepo) ([]dto.ProductDto, error) {
 	var products []dto.ProductDto
 	fieldName, shortName, err := getFieldNameToOrder(cylo.Name, cylo.SortType)
 
@@ -47,7 +52,7 @@ func (cylo CyloBooking) Sort(dbService storage.Db) ([]dto.ProductDto, error) {
 		log.Println(err)
 		return nil, err
 	}
-	products = dbService.ShortBy(fieldName, shortName)
+	products = productRepo.ShortBy(fieldName, shortName)
 	return products, nil
 
 }

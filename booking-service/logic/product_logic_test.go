@@ -2,10 +2,14 @@ package logic
 
 import (
 	"booking-service/dto"
+	"log"
 	"testing"
 )
 
-type DBServiceMock struct {
+type ProductRepoMock struct {
+}
+
+type AnalyzeMock struct {
 }
 
 func TestService_GetDataSuccess(t *testing.T) {
@@ -14,9 +18,9 @@ func TestService_GetDataSuccess(t *testing.T) {
 		{ID: "2", Name: "Samsung", Branch: "Test1", Price: 16.0},
 	}
 
-	dbMock := DBServiceMock{}
-	booking := CyloBooking{}
-	var rs = booking.GetProduct(dbMock)
+	dbMock := ProductRepoMock{}
+	booking := CyloBooking{ProductRepo: dbMock}
+	var rs = booking.GetProduct()
 
 	if len(rs) != len(expectValue) {
 		t.Errorf("got %d, wanted %d", len(rs), len(expectValue))
@@ -32,7 +36,7 @@ func TestService_SortSuccess(t *testing.T) {
 		{ID: "2", Name: "Samsung", Branch: "Test1", Price: 16.0},
 	}
 
-	dbMock := DBServiceMock{}
+	dbMock := ProductRepoMock{}
 	booking := CyloBooking{Name: "branch", SortType: "desc"}
 	var rs, _ = booking.Sort(dbMock)
 
@@ -42,7 +46,7 @@ func TestService_SortSuccess(t *testing.T) {
 }
 
 func TestService_SortReturnErr(t *testing.T) {
-	dbMock := DBServiceMock{}
+	dbMock := ProductRepoMock{}
 	booking := CyloBooking{Name: "branch11", SortType: "desc"}
 	var _, err = booking.Sort(dbMock)
 	if err == nil {
@@ -51,15 +55,17 @@ func TestService_SortReturnErr(t *testing.T) {
 }
 
 func TestService_filter(t *testing.T) {
-	dbMock := DBServiceMock{}
-	booking := CyloBooking{Name: "branch", Branch: "test"}
-	var rs = booking.FilterProduct(dbMock)
+	dbMock := ProductRepoMock{}
+	analyzeMock := AnalyzeMock{}
+
+	booking := CyloBooking{Name: "branch", Branch: "test", ProductRepo: dbMock, AuditServ: analyzeMock}
+	var rs = booking.FilterProduct()
 	if len(rs) != 1 {
 		t.Errorf("got %d, wanted %d", len(rs), 1)
 	}
 }
 
-func (db DBServiceMock) FindAll() []dto.ProductDto {
+func (db ProductRepoMock) FindAll() []dto.ProductDto {
 	var products = []dto.ProductDto{
 		{ID: "1", Name: "Apple", Branch: "Test1", Price: 15.0},
 		{ID: "2", Name: "Samsung", Branch: "Test1", Price: 16.0},
@@ -67,17 +73,22 @@ func (db DBServiceMock) FindAll() []dto.ProductDto {
 	return products
 }
 
-func (db DBServiceMock) FilterProduct(name string, branch string, price float64) []dto.ProductDto {
+func (db ProductRepoMock) FilterProduct(name string, branch string, price float64) []dto.ProductDto {
 	var products = []dto.ProductDto{
 		{ID: "1", Name: name, Branch: branch, Price: price},
 	}
 	return products
 }
 
-func (db DBServiceMock) ShortBy(name string, shortType string) []dto.ProductDto {
+func (db ProductRepoMock) ShortBy(name string, shortType string) []dto.ProductDto {
 	var products = []dto.ProductDto{
 		{ID: "1", Name: "Apple", Branch: "Test1", Price: 15.0},
 		{ID: "2", Name: "Samsung", Branch: "Test1", Price: 16.0},
 	}
 	return products
+}
+
+func (aMock AnalyzeMock) sendAudit(auditDto dto.AuditDto) {
+	// do nothing
+	log.Printf("Mocking")
 }

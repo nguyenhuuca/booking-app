@@ -19,9 +19,10 @@ func New(db *gorm.DB) handler {
 
 // getProduct responds with the list of all product as JSON.
 func (h handler) getProduct(c *gin.Context) {
-	booking := logic.CyloBooking{}
-	dbService := storage.OrmDb{Instance: h.DB}
-	c.IndentedJSON(http.StatusOK, booking.GetProduct(dbService))
+
+	productRepo := storage.ProductGorm{Instance: h.DB}
+	booking := logic.CyloBooking{ProductRepo: productRepo}
+	c.IndentedJSON(http.StatusOK, booking.GetProduct())
 }
 
 func (h handler) getFilter(c *gin.Context) {
@@ -32,9 +33,12 @@ func (h handler) getFilter(c *gin.Context) {
 	if c.Query("price") != "" {
 		price, _ = strconv.ParseFloat(c.Query("price"), 2)
 	}
-	booking := logic.CyloBooking{Name: name, Branch: branch, Price: price}
-	dbService := storage.OrmDb{Instance: h.DB}
-	c.IndentedJSON(http.StatusOK, booking.FilterProduct(dbService))
+
+	productRepo := storage.ProductGorm{Instance: h.DB}
+	auditOrm := storage.AuditOrm{Instance: h.DB}
+	analyze := logic.Analyze{AuditRepo: auditOrm}
+	booking := logic.CyloBooking{Name: name, Branch: branch, Price: price, ProductRepo: productRepo, AuditServ: analyze}
+	c.IndentedJSON(http.StatusOK, booking.FilterProduct())
 }
 
 func (h handler) sort(c *gin.Context) {
@@ -42,8 +46,8 @@ func (h handler) sort(c *gin.Context) {
 	sortType := c.Query("type")
 
 	booking := logic.CyloBooking{Name: sortCond, SortType: sortType}
-	dbService := storage.OrmDb{Instance: h.DB}
-	rs, err := booking.Sort(dbService)
+	productRepo := storage.ProductGorm{Instance: h.DB}
+	rs, err := booking.Sort(productRepo)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, err)
 	} else {

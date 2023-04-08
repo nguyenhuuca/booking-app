@@ -10,16 +10,23 @@ import (
 
 const CommonJoin = "inner join branches on products.branch_id = branches.id"
 
-type Db interface {
+type ProductRepo interface {
 	FindAll() []dto.ProductDto
 	FilterProduct(name string, branch string, price float64) []dto.ProductDto
 	ShortBy(name string, shortType string) []dto.ProductDto
 }
-type OrmDb struct {
+
+type AuditRepo interface {
+	Save(audit Audit)
+}
+type AuditOrm struct {
+	Instance *gorm.DB
+}
+type ProductGorm struct {
 	Instance *gorm.DB
 }
 
-func (db OrmDb) FilterProduct(name string, branch string, price float64) []dto.ProductDto {
+func (db ProductGorm) FilterProduct(name string, branch string, price float64) []dto.ProductDto {
 	var products []dto.ProductDto
 	db.Instance.
 		Model(Product{}).
@@ -30,7 +37,7 @@ func (db OrmDb) FilterProduct(name string, branch string, price float64) []dto.P
 	return products
 }
 
-func (db OrmDb) ShortBy(name string, shortType string) []dto.ProductDto {
+func (db ProductGorm) ShortBy(name string, shortType string) []dto.ProductDto {
 	var products []dto.ProductDto
 	db.Instance.
 		Model(Product{}).
@@ -42,7 +49,7 @@ func (db OrmDb) ShortBy(name string, shortType string) []dto.ProductDto {
 
 }
 
-func (db OrmDb) FindAll() []dto.ProductDto {
+func (db ProductGorm) FindAll() []dto.ProductDto {
 	var products []dto.ProductDto
 	db.Instance.
 		Model(Product{}).
@@ -50,4 +57,8 @@ func (db OrmDb) FindAll() []dto.ProductDto {
 		Joins(CommonJoin).
 		Scan(&products)
 	return products
+}
+
+func (db AuditOrm) Save(audit Audit) {
+	db.Instance.Create(&audit)
 }
