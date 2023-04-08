@@ -2,6 +2,7 @@ package api
 
 import (
 	"booking-service/logic"
+	"booking-service/storage"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -19,8 +20,7 @@ func New(db *gorm.DB) handler {
 // getProduct responds with the list of all product as JSON.
 func (h handler) getProduct(c *gin.Context) {
 	booking := logic.CyloBooking{}
-
-	dbService := logic.OrmDb{Instance: h.DB}
+	dbService := storage.OrmDb{Instance: h.DB}
 	c.IndentedJSON(http.StatusOK, booking.GetProduct(dbService))
 }
 
@@ -33,7 +33,7 @@ func (h handler) getFilter(c *gin.Context) {
 		price, _ = strconv.ParseFloat(c.Query("price"), 2)
 	}
 	booking := logic.CyloBooking{Name: name, Branch: branch, Price: price}
-	dbService := logic.OrmDb{Instance: h.DB}
+	dbService := storage.OrmDb{Instance: h.DB}
 	c.IndentedJSON(http.StatusOK, booking.FilterProduct(dbService))
 }
 
@@ -42,7 +42,7 @@ func (h handler) sort(c *gin.Context) {
 	sortType := c.Query("type")
 
 	booking := logic.CyloBooking{Name: sortCond, SortType: sortType}
-	dbService := logic.OrmDb{Instance: h.DB}
+	dbService := storage.OrmDb{Instance: h.DB}
 	rs, err := booking.Sort(dbService)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, err)

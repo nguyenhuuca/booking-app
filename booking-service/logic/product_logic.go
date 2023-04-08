@@ -1,5 +1,9 @@
+// Package logic /*
 package logic
 
+/**
+Using to handle business from booking
+*/
 import (
 	"booking-service/dto"
 	"booking-service/storage"
@@ -9,12 +13,6 @@ import (
 )
 
 var whiteList = []string{"name", "price", "branch", "asc", "desc"}
-
-type Db interface {
-	findAll() []dto.ProductDto
-	filterProduct(name string, branch string, price float64) []dto.ProductDto
-	shortBy(name string, shortType string) []dto.ProductDto
-}
 
 type BookingServ interface {
 	GetProduct(db *gorm.DB) []dto.ProductDto
@@ -29,23 +27,19 @@ type CyloBooking struct {
 	SortType string
 }
 
-type OrmDb struct {
-	Instance *gorm.DB
-}
-
-func (cylo CyloBooking) GetProduct(dbService Db) []dto.ProductDto {
+func (cylo CyloBooking) GetProduct(dbService storage.Db) []dto.ProductDto {
 	var products []dto.ProductDto
-	products = dbService.findAll()
+	products = dbService.FindAll()
 	return products
 }
 
-func (cylo CyloBooking) FilterProduct(dbService Db) []dto.ProductDto {
+func (cylo CyloBooking) FilterProduct(dbService storage.Db) []dto.ProductDto {
 	var products []dto.ProductDto
-	products = dbService.filterProduct(cylo.Name, cylo.Branch, cylo.Price)
+	products = dbService.FilterProduct(cylo.Name, cylo.Branch, cylo.Price)
 	return products
 }
 
-func (cylo CyloBooking) Sort(dbService Db) ([]dto.ProductDto, error) {
+func (cylo CyloBooking) Sort(dbService storage.Db) ([]dto.ProductDto, error) {
 	var products []dto.ProductDto
 	fieldName, shortName, err := getFieldNameToOrder(cylo.Name, cylo.SortType)
 
@@ -53,11 +47,13 @@ func (cylo CyloBooking) Sort(dbService Db) ([]dto.ProductDto, error) {
 		log.Println(err)
 		return nil, err
 	}
-	products = dbService.shortBy(fieldName, shortName)
+	products = dbService.ShortBy(fieldName, shortName)
 	return products, nil
 
 }
 
+// avoid sql injection when using some built-in function from GORM
+// ref: https://gorm.io/docs/security.html
 func getFieldNameToOrder(name string, shortType string) (string, string, error) {
 	if !contains(whiteList, name) {
 		return "", "", utils.NewDefaultError("error get field name to sort ")
@@ -66,39 +62,6 @@ func getFieldNameToOrder(name string, shortType string) (string, string, error) 
 		return "", "", utils.NewDefaultError("error get field name to sort ")
 	}
 	return name, shortType, nil
-
-}
-
-func (db OrmDb) findAll() []dto.ProductDto {
-	var products []dto.ProductDto
-	db.Instance.
-		Model(&storage.Product{}).
-		Select("products.id, products.name, products.price, branches.name as branch").
-		Joins("inner join branches on products.branch_id = branches.id").
-		Scan(&products)
-	return products
-}
-
-func (db OrmDb) filterProduct(name string, branch string, price float64) []dto.ProductDto {
-	var products []dto.ProductDto
-	db.Instance.
-		Model(&storage.Product{}).
-		Select("products. id, products.name, products.price, branches.name as branch").
-		Joins("inner join branches on products.branch_id = branches.id").
-		Where("products.name like ? and branches.name like ? and products.price >= ? ", "%"+name+"%", "%"+branch+"%", price).
-		Scan(&products)
-	return products
-}
-
-func (db OrmDb) shortBy(name string, shortType string) []dto.ProductDto {
-	var products []dto.ProductDto
-	db.Instance.
-		Model(&storage.Product{}).
-		Select("products.id, products.name, products.price, branches.name as branch").
-		Joins("inner join branches on products.branch_id = branches.id").
-		Order(name + " " + shortType).
-		Scan(&products)
-	return products
 
 }
 

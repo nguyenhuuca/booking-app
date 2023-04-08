@@ -59,7 +59,7 @@ func TestService_filter(t *testing.T) {
 	}
 }
 
-func (db DBServiceMock) findAll() []dto.ProductDto {
+func (db DBServiceMock) FindAll() []dto.ProductDto {
 	var products = []dto.ProductDto{
 		{ID: "1", Name: "Apple", Branch: "Test1", Price: 15.0},
 		{ID: "2", Name: "Samsung", Branch: "Test1", Price: 16.0},
@@ -67,14 +67,14 @@ func (db DBServiceMock) findAll() []dto.ProductDto {
 	return products
 }
 
-func (db DBServiceMock) filterProduct(name string, branch string, price float64) []dto.ProductDto {
+func (db DBServiceMock) FilterProduct(name string, branch string, price float64) []dto.ProductDto {
 	var products = []dto.ProductDto{
 		{ID: "1", Name: name, Branch: branch, Price: price},
 	}
 	return products
 }
 
-func (db DBServiceMock) shortBy(name string, shortType string) []dto.ProductDto {
+func (db DBServiceMock) ShortBy(name string, shortType string) []dto.ProductDto {
 	var products = []dto.ProductDto{
 		{ID: "1", Name: "Apple", Branch: "Test1", Price: 15.0},
 		{ID: "2", Name: "Samsung", Branch: "Test1", Price: 16.0},
