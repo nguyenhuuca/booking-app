@@ -89,7 +89,8 @@ func (db ProductRepoMock) ShortBy(name string, shortType string) []dto.ProductDt
 	return products
 }
 
-func (aMock AnalyzeMock) SendAudit(auditDto dto.AuditDto) {
+func (aMock AnalyzeMock) SendAudit(auditDto dto.AuditDto) bool {
 	// do nothing
-	log.Printf("Mocking SaveAudit")
+	log.Printf("Mocking SendAudit")
+	return true
 }
