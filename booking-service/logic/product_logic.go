@@ -38,7 +38,7 @@ func (cylo CyloBooking) GetProduct() []dto.ProductDto {
 func (cylo CyloBooking) FilterProduct() []dto.ProductDto {
 	var products []dto.ProductDto
 	products = cylo.ProductRepo.FilterProduct(cylo.Name, cylo.Branch, cylo.Price)
-	cylo.AuditServ.sendAudit(dto.AuditDto{Identifier: "test",
+	go cylo.AuditServ.SendAudit(dto.AuditDto{Identifier: "test",
 		Action: "Filter",
 		Data:   dto.ProductDto{Price: cylo.Price, Name: cylo.Name, Branch: cylo.Branch}})
 	return products
