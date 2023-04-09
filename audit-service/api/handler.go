@@ -28,6 +28,6 @@ func (h handler) sendAudit(c *gin.Context) {
 	}
 	auditRepo := storage.AuditOrm{Instance: h.DB}
 	analyze := logic.Analyze{AuditRepo: auditRepo}
-	analyze.SendAudit(auditDto)
+	analyze.SaveAudit(auditDto)
 	c.IndentedJSON(http.StatusOK, "Success")
 }

@@ -37,7 +37,8 @@ func TestService_SortSuccess(t *testing.T) {
 	}
 
 	productRepoMock := ProductRepoMock{}
-	booking := CyloBooking{Name: "branch", SortType: "desc"}
+	analyzeMock := AnalyzeMock{}
+	booking := CyloBooking{Name: "branch", SortType: "desc", AuditServ: analyzeMock}
 	var rs, _ = booking.Sort(productRepoMock)
 
 	if len(rs) != len(expectValue) {
@@ -90,5 +91,5 @@ func (db ProductRepoMock) ShortBy(name string, shortType string) []dto.ProductDt
 
 func (aMock AnalyzeMock) SendAudit(auditDto dto.AuditDto) {
 	// do nothing
-	log.Printf("Mocking SendAudit")
+	log.Printf("Mocking SaveAudit")
 }

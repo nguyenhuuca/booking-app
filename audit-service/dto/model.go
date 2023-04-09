@@ -8,7 +8,7 @@ type ProductDto struct {
 }
 
 type AuditDto struct {
-	Identifier string     `json:"identifier"`
-	Action     string     `json:"action"`
-	Data       ProductDto `json:"data"`
+	Identifier string `json:"identifier"`
+	Action     string `json:"action"`
+	Data       string `json:"data"`
 }

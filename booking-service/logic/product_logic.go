@@ -8,6 +8,7 @@ import (
 	"booking-service/dto"
 	"booking-service/storage"
 	"booking-service/utils"
+	"encoding/json"
 	"gorm.io/gorm"
 	"log"
 )
@@ -37,22 +38,29 @@ func (cylo CyloBooking) GetProduct() []dto.ProductDto {
 
 func (cylo CyloBooking) FilterProduct() []dto.ProductDto {
 	var products []dto.ProductDto
+	jsonData, _ := json.Marshal(dto.ProductDto{Price: cylo.Price, Name: cylo.Name, Branch: cylo.Branch})
 	products = cylo.ProductRepo.FilterProduct(cylo.Name, cylo.Branch, cylo.Price)
+
 	go cylo.AuditServ.SendAudit(dto.AuditDto{Identifier: "test",
 		Action: "Filter",
-		Data:   dto.ProductDto{Price: cylo.Price, Name: cylo.Name, Branch: cylo.Branch}})
+		Data:   string(jsonData)})
+
 	return products
 }
 
 func (cylo CyloBooking) Sort(productRepo storage.ProductRepo) ([]dto.ProductDto, error) {
 	var products []dto.ProductDto
 	fieldName, shortName, err := getFieldNameToOrder(cylo.Name, cylo.SortType)
+	jsonData, _ := json.Marshal(map[string]string{"name": fieldName, "shortType": shortName})
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 	products = productRepo.ShortBy(fieldName, shortName)
+	go cylo.AuditServ.SendAudit(dto.AuditDto{Identifier: "test",
+		Action: "Sort",
+		Data:   string(jsonData)})
 	return products, nil
 
 }
