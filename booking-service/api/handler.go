@@ -35,8 +35,8 @@ func (h handler) getFilter(c *gin.Context) {
 	}
 
 	productRepo := storage.ProductGorm{Instance: h.DB}
-	auditOrm := storage.AuditOrm{Instance: h.DB}
-	analyze := logic.Analyze{AuditRepo: auditOrm}
+	auditRepo := storage.AuditOrm{Instance: h.DB}
+	analyze := logic.Analyze{AuditRepo: auditRepo}
 	booking := logic.CyloBooking{Name: name, Branch: branch, Price: price, ProductRepo: productRepo, AuditServ: analyze}
 	c.IndentedJSON(http.StatusOK, booking.FilterProduct())
 }

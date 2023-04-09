@@ -18,8 +18,8 @@ func TestService_GetDataSuccess(t *testing.T) {
 		{ID: "2", Name: "Samsung", Branch: "Test1", Price: 16.0},
 	}
 
-	dbMock := ProductRepoMock{}
-	booking := CyloBooking{ProductRepo: dbMock}
+	productRepoMock := ProductRepoMock{}
+	booking := CyloBooking{ProductRepo: productRepoMock}
 	var rs = booking.GetProduct()
 
 	if len(rs) != len(expectValue) {
@@ -36,9 +36,9 @@ func TestService_SortSuccess(t *testing.T) {
 		{ID: "2", Name: "Samsung", Branch: "Test1", Price: 16.0},
 	}
 
-	dbMock := ProductRepoMock{}
+	productRepoMock := ProductRepoMock{}
 	booking := CyloBooking{Name: "branch", SortType: "desc"}
-	var rs, _ = booking.Sort(dbMock)
+	var rs, _ = booking.Sort(productRepoMock)
 
 	if len(rs) != len(expectValue) {
 		t.Errorf("got %d, wanted %d", len(rs), len(expectValue))
@@ -55,10 +55,10 @@ func TestService_SortReturnErr(t *testing.T) {
 }
 
 func TestService_filter(t *testing.T) {
-	dbMock := ProductRepoMock{}
+	productRepoMock := ProductRepoMock{}
 	analyzeMock := AnalyzeMock{}
 
-	booking := CyloBooking{Name: "branch", Branch: "test", ProductRepo: dbMock, AuditServ: analyzeMock}
+	booking := CyloBooking{Name: "branch", Branch: "test", ProductRepo: productRepoMock, AuditServ: analyzeMock}
 	var rs = booking.FilterProduct()
 	if len(rs) != 1 {
 		t.Errorf("got %d, wanted %d", len(rs), 1)
