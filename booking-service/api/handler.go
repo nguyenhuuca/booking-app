@@ -45,8 +45,12 @@ func (h handler) sort(c *gin.Context) {
 	sortCond := c.Query("name")
 	sortType := c.Query("type")
 
-	booking := logic.CyloBooking{Name: sortCond, SortType: sortType}
 	productRepo := storage.ProductGorm{Instance: h.DB}
+	auditRepo := storage.AuditOrm{Instance: h.DB}
+	analyze := logic.Analyze{AuditRepo: auditRepo}
+
+	booking := logic.CyloBooking{Name: sortCond, SortType: sortType, ProductRepo: productRepo, AuditServ: analyze}
+
 	rs, err := booking.Sort(productRepo)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, err)

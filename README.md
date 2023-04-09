@@ -17,47 +17,96 @@ Booking
 
 #### Tructure project
 ---
+
 ```
-├───booking-service  
-│   ├───api   // handler incoming request
+├───audit-service
+│   ├───api // handler incoming request
 │   ├───config
-│   ├───db     
+│   ├───db
+│   ├───dto
+│   ├───logic
+│   ├───storage // maping entity
+├───doc
+│   └───utils
+├───booking-service
+│   ├───api
+│   ├───config
+│   ├───db
 │   │   └───migrations
 │   ├───dto
-│   ├───logic     
+│   ├───logic
 │   ├───repo
-│   └───storage  // maping entity
+│   ├───restclient
+│   ├───storage
+│   └───utils
 ├───doc
 │   ├───image
 │   └───planuml
+├───out
+│   └───doc
+│       └───planuml
+│           ├───Booking-component
+│           ├───Booking-Container
+│           └───Booking-Context
 └───webapp
     ├───assets
     ├───css
     └───js
 
-
 ```
+#### Database diagram
+---
+![Alt text](doc/image/diagram.png)
+
+In Current solution. I only use single database for 2 service: booking-service and audit-service.
+For best practice, We should split to 2 database independenly:
+- bookingdb: branchs, product table.
+- auditdb: audits.
+
+
 
 #### Set up & Installation
 ---
 ##### Installation:
 - Golang >= 1.20
 - PostgresSQL.
-- Creata database with name bookingdb
-- Dowload all package
-    ```
+- Creata database with name **bookingdb**
+- Download all package for **booking service**
+     ```
     cd booking-service
     go mod tidy
     ```
 - Run migration data, change database server info on your machine.
     ```
     migrate -database postgres://{user}:{pass}@{host}/bookingdb?sslmode=disable -path db/migrations up
+- Download all package for **audit service**
+     ```
+    cd audit-service
+    go mod tidy
     ```
 
 
-##### Running Appp on LocalHost:
-- Change file api/.env.example to api/.env and configure database info for postgres sql
-```shell
-DB_USER=postgres
-```
+##### Running App on LocalHost:
+1. **Booking-service**
+- Change file booking-service/.env.example to booking-service/.env and change database info for postgres sql:
+    ```
+    DATABASE_URL=postgres://{user}:{pass}@{host}:5432/bookingdb
+    AUDIT_SERVICE=http://localhost:8081
+    PORT=8080
+    ```
+    *Note that: In case we do not config AUDIT_SERVICE enviroiment parameter, the booking-savice will save audit info to database directly without call audit-service api*.
 
+
+- Start booking-service:
+    ```
+    go run main.go 
+    ```
+2. **Audit-service**
+- Change file booking-service/.env.example to booking-service/.env and change database info for postgres sql:
+    ```
+    DATABASE_URL=postgres://{user}:{pass}@{host}:5432/bookingdb
+    ```
+- Start audit-service:
+    ```
+    go run main.go 
+    ```

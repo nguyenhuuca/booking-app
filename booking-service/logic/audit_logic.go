@@ -2,25 +2,45 @@ package logic
 
 import (
 	"booking-service/dto"
+	"booking-service/restclient"
 	"booking-service/storage"
-	"encoding/json"
 	"log"
+	"net/http"
+	"os"
 )
 
 type AuditServ interface {
-	sendAudit(audit dto.AuditDto)
+	SendAudit(audit dto.AuditDto) bool
 }
 
 type Analyze struct {
 	AuditRepo storage.AuditRepo
 }
 
-func (a Analyze) sendAudit(auditDto dto.AuditDto) {
-	product, err := json.Marshal(auditDto.Data)
-	if err != nil {
-		log.Printf("Error to parse auditDto data")
-		return
+func (a Analyze) SendAudit(auditDto dto.AuditDto) bool {
+	var auditBaseUrl = os.Getenv("AUDIT_SERVICE")
+	if auditBaseUrl != "" {
+		err := sendAuditViaApi(auditDto)
+		if err != nil {
+			return false
+		}
+		return true
+	} else {
+		log.Println("Save audit...")
+		auditData := storage.Audit{Identifier: auditDto.Identifier, Data: auditDto.Data, Action: auditDto.Action}
+		a.AuditRepo.Save(auditData)
+		return true
 	}
-	auditData := storage.Audit{Identifier: auditDto.Identifier, Data: string(product), Action: auditDto.Action}
-	a.AuditRepo.Save(auditData)
+}
+
+func sendAuditViaApi(auditDto dto.AuditDto) error {
+	log.Println("Send audit...")
+	var headers = http.Header{}
+	headers.Add("Content-Type", "application/json")
+	_, err := restclient.Post(os.Getenv("AUDIT_SERVICE")+"/send-audits", auditDto, headers)
+	if err != nil {
+		log.Println("Error", err)
+	}
+	return err
+
 }
