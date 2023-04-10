@@ -1,5 +1,6 @@
 # booking-app
-Booking 
+Building an online booking application to sell their
+products.
 
 
 #### Context Diagram
@@ -15,6 +16,8 @@ Booking
 ----
 ![Alt text](doc/image/Booking-component.png)
 
+![Alt text](doc/image/Booking-component-audit.png)
+
 #### Tructure project
 ---
 
@@ -26,7 +29,6 @@ Booking
 │   ├───dto
 │   ├───logic
 │   ├───storage // maping entity
-├───doc
 │   └───utils
 ├───booking-service
 │   ├───api
@@ -42,12 +44,6 @@ Booking
 ├───doc
 │   ├───image
 │   └───planuml
-├───out
-│   └───doc
-│       └───planuml
-│           ├───Booking-component
-│           ├───Booking-Container
-│           └───Booking-Context
 └───webapp
     ├───assets
     ├───css
@@ -58,7 +54,7 @@ Booking
 ---
 ![Alt text](doc/image/diagram.png)
 
-In Current solution. I only use single database for 2 service: booking-service and audit-service.
+In current solution. I only use single database for 2 service: booking-service and audit-service.
 For best practice, We should split to 2 database independenly:
 - bookingdb: branchs, product table.
 - auditdb: audits.
@@ -110,3 +106,30 @@ For best practice, We should split to 2 database independenly:
     ```
     go run main.go 
     ```
+
+3. **Run web**
+   - Open webapp/index.html
+   - Result:
+  ![Alt text](doc/image/web.png)
+
+
+#### Technical sumamry
+---
+
+1. **Database**
+   - Using PostgresSQL for reason: 
+     - It was use popular
+     - Support dynamic type as json, can query with json format
+     - Relational database.
+2. **Arch**
+   - Apply micro-service arch for easy to scale, and easy to maintaince, and also we aree clearcly the boundary context: booking and audit.
+3. **Application**
+   - Only focus one thing: make the application/service become abstraction as much as posiple:
+     - Follow SOLD principle to implement service
+     - Appling DI for easy to maintain and testing
+
+#### Open source lib to use:
+---
+    Gorm: MIT License
+    Gin: MIT License
+    DotEnv: MIT License
