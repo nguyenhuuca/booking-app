@@ -18,7 +18,7 @@ products.
 
 ![Alt text](doc/image/Booking-component-audit.png)
 
-#### Tructure project
+#### Structure project
 ---
 
 ```
@@ -71,7 +71,7 @@ For best practice, We should split to 2 database independenly:
     go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
     ```
 
-- Creata database with name **bookingdb**
+- Creat database with name **bookingdb**
 - Download all package for **booking service**
      ```
     cd booking-service
@@ -137,7 +137,7 @@ For best practice, We should split to 2 database independenly:
      - Support dynamic type as json, can query with json format
      - Relational database.
 2. **Arch**
-   - Apply micro-service arch for easy to scale, and easy to maintaince, and also we aree clearly the boundary context: booking and audit.
+   - Apply micro-service arch for easy to scale, and easy to maintaince, and also we are clearly the boundary context: booking and audit.
 3. **Application**
    - Only focus one thing: make the application/service become abstraction as much as posiple:
      - Follow SOLID principle to implement service
