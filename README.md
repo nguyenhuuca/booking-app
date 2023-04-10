@@ -118,15 +118,15 @@ For best practice, We should split to 2 database independenly:
 
 1. **Database**
    - Using PostgresSQL for reason: 
-     - It was use popular
+     - It was used popular
      - Support dynamic type as json, can query with json format
      - Relational database.
 2. **Arch**
-   - Apply micro-service arch for easy to scale, and easy to maintaince, and also we aree clearcly the boundary context: booking and audit.
+   - Apply micro-service arch for easy to scale, and easy to maintaince, and also we aree clearly the boundary context: booking and audit.
 3. **Application**
    - Only focus one thing: make the application/service become abstraction as much as posiple:
-     - Follow SOLD principle to implement service
-     - Appling DI for easy to maintain and testing
+     - Follow SOLID principle to implement service
+     - Apply DI for easy to maintain and testing
 
 #### Open source lib to use:
 ---
