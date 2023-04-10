@@ -65,7 +65,12 @@ For best practice, We should split to 2 database independenly:
 ---
 ##### Installation:
 - Golang >= 1.20
-- PostgresSQL.
+- PostgresSQL
+- Golang Migration CLI 
+    ```
+    go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+    ```
+
 - Creata database with name **bookingdb**
 - Download all package for **booking service**
      ```
@@ -75,8 +80,11 @@ For best practice, We should split to 2 database independenly:
 - Run migration data, change database server info on your machine.
     ```
     migrate -database postgres://{user}:{pass}@{host}/bookingdb?sslmode=disable -path db/migrations up
+    ```
+    *In case You do not use migration cli, please run manualy all script in db/migrations*
+    
 - Download all package for **audit service**
-     ```
+    ```
     cd audit-service
     go mod tidy
     ```
