@@ -120,6 +120,13 @@ For best practice, We should split to 2 database independenly:
    - Result:
   ![Alt text](doc/image/web.png)
 
+4. **Unit test**
+   - Some test case was implemented in booking-service/logic:
+    ```
+    cd booking-service/logic
+    go test -v
+    ```
+
 
 #### Technical sumamry
 ---

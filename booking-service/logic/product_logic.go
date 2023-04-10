@@ -41,7 +41,7 @@ func (cylo CyloBooking) FilterProduct() []dto.ProductDto {
 	jsonData, _ := json.Marshal(dto.ProductDto{Price: cylo.Price, Name: cylo.Name, Branch: cylo.Branch})
 	products = cylo.ProductRepo.FilterProduct(cylo.Name, cylo.Branch, cylo.Price)
 
-	go cylo.AuditServ.SendAudit(dto.AuditDto{Identifier: "test",
+	go cylo.AuditServ.SendAudit(dto.AuditDto{Identifier: "testuser",
 		Action: "Filter",
 		Data:   string(jsonData)})
 
@@ -58,7 +58,7 @@ func (cylo CyloBooking) Sort(productRepo storage.ProductRepo) ([]dto.ProductDto,
 		return nil, err
 	}
 	products = productRepo.ShortBy(fieldName, shortName)
-	go cylo.AuditServ.SendAudit(dto.AuditDto{Identifier: "test",
+	go cylo.AuditServ.SendAudit(dto.AuditDto{Identifier: "testUser",
 		Action: "Sort",
 		Data:   string(jsonData)})
 	return products, nil
